@@ -12,7 +12,7 @@ $outputFile = 'image_data.csv';
 $output = fopen($outputFile, 'w');
 
 // Write CSV headers
-fputcsv($output, array('Name', 'File Size (bytes)', 'Width', 'Height'));
+fputcsv($output, array('Name', 'File Size (bytes)', 'Width', 'Height', 'Aspect Ratio'));
 
 foreach ($urls as $url) {
     // Get the file name from the URL
@@ -22,6 +22,7 @@ foreach ($urls as $url) {
     $fileSize = 'Unknown';
     $width = 'Unknown';
     $height = 'Unknown';
+    $aspectRatio = 'Unknown';
 
     // Get file size using HTTP HEAD request
     $headers = @get_headers($url, 1);
@@ -35,10 +36,15 @@ foreach ($urls as $url) {
     if ($imageSize) {
         $width = $imageSize[0];
         $height = $imageSize[1];
+
+        // Calculate aspect ratio
+        if ($height != 0) {
+            $aspectRatio = round($width / $height, 2);
+        }
     }
 
     // Write the data to the CSV file
-    fputcsv($output, array($name, $fileSize, $width, $height));
+    fputcsv($output, array($name, $fileSize, $width, $height, $aspectRatio));
 }
 
 // Close the CSV file
